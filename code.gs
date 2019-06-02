@@ -15,30 +15,30 @@ var questionOutputSheet = spreadSheet.getSheetByName("question")
 var choiceOutputSheet = spreadSheet.getSheetByName("choice")
 
 function main() {
- clearOutputSheet()
- waitType()
- store()
+  clearOutputSheet()
+  waitType()
+  store()
 }
 
 function waitType() {
- var currentWaitTypeId = ""
- var currentQuestionId = -1
- var currentChoiceId = -1
- var nextQuestionId = ""
+  var currentWaitTypeId = ""
+  var currentQuestionId = -1
+  var currentChoiceId = -1
+  var nextQuestionId = ""
 
- // 質問階層分questionId管理リストを用意
- var qIdList = []
- for (i = 0; i < 20; i++) {
-   qIdList.push(-1)
- }
- // 質問の表示順
- var qDispNo = -1
+  // 質問階層分questionId管理リストを用意
+  var qIdList = []
+  for (i = 0; i < 20; i++) {
+    qIdList.push(-1)
+  }
+  // 質問の表示順
+  var qDispNo = -1
 
- // 選択肢の表示順
- var cDispNoList = []
- for (i = 0; i < 20; i++) {
-   cDispNoList.push(-1)
- }
+  // 選択肢の表示順
+  var cDispNoList = []
+  for (i = 0; i < 20; i++) {
+    cDispNoList.push(-1)
+  }
 
  // 行ごとにループ
  for (var i = 2; i < MAX_ROW_COUNT; i++) {
@@ -91,42 +91,42 @@ function waitType() {
 
 // 待ち項目に紐づく質問
 function waitTypeQuestion(waitTypeId, questionId, questionWord, dispNo, nextQuestionId) {
- var rowValues = [WAIT_TYPE_GROUP_CD, questionId, questionWord, waitTypeId, DISP_FLG, dispNo, nextQuestionId]
- output("question", rowValues)
+  var rowValues = [WAIT_TYPE_GROUP_CD, questionId, questionWord, waitTypeId, DISP_FLG, dispNo, nextQuestionId]
+  output("question", rowValues)
 }
 
 // 待ち項目に紐づく回答
 function waitTypeChoice(questionId, choiceId, choiceWord, waitTypeId, dispNo, nextQuestionId) {
- var rowValues = [WAIT_TYPE_GROUP_CD, questionId, choiceId, choiceWord, waitTypeId, dispNo, nextQuestionId]
- output("choice", rowValues)
+  var rowValues = [WAIT_TYPE_GROUP_CD, questionId, choiceId, choiceWord, waitTypeId, dispNo, nextQuestionId]
+  output("choice", rowValues)
 }
 
 // 結果シートの値をクリア
 function clearOutputSheet() {
- questionOutputSheet.clearContents()
- var titleValues = ["groupCd", "questionId", "questionWord", "waitTypeId", "dispFlg", "dispNo", "nextQuestionId"]
- var column = titleValues.length
- questionOutputSheet.getRange(1, 1, 1, column).setValues([titleValues])
+  questionOutputSheet.clearContents()
+  var titleValues = ["groupCd", "questionId", "questionWord", "waitTypeId", "dispFlg", "dispNo", "nextQuestionId"]
+  var column = titleValues.length
+  questionOutputSheet.getRange(1, 1, 1, column).setValues([titleValues])
 
- choiceOutputSheet.clearContents()
- var titleValues = ["groupCd", "questionId", "choiceId", "choiceWord", "waitTypeId", "dispNo", "nextQuestionId"]
- var column = titleValues.length
- choiceOutputSheet.getRange(1, 1, 1, column).setValues([titleValues])
+  choiceOutputSheet.clearContents()
+  var titleValues = ["groupCd", "questionId", "choiceId", "choiceWord", "waitTypeId", "dispNo", "nextQuestionId"]
+  var column = titleValues.length
+  choiceOutputSheet.getRange(1, 1, 1, column).setValues([titleValues])
 }
 
 // 結果シートに書き出し
 function output(sheetName, rowValues) {
- var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(sheetName)
- var lastRow = getLastRow(sheet)
- var row = lastRow + 1
- var column = rowValues.length
-sheet.getRange(row, 1, 1, column).setValues([rowValues])
+  var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(sheetName)
+  var lastRow = getLastRow(sheet)
+  var row = lastRow + 1
+  var column = rowValues.length
+  sheet.getRange(row, 1, 1, column).setValues([rowValues])
 }
 
 // シートの値がある最終行を取得
 function getLastRow(sheet) {
- const columnVals = sheet.getRange('A:A').getValues()
- return columnVals.filter(String).length
+  const columnVals = sheet.getRange('A:A').getValues()
+  return columnVals.filter(String).length
 }
 
 
