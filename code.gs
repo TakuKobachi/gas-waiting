@@ -60,7 +60,8 @@ function waitType() {
      cDispNoList[0] = -1
      waitTypeQuestion(currentWaitTypeId, qIdList[0], questionWord1, qDispNo, "")
    }
-   var nextQuestionId1 = rowValues[4] != "" ? currentQuestionId : ""
+   Logger.log(currentQuestionId)
+   var nextQuestionId1 = rowValues[4] != "" ? currentQuestionId+1 : ""
    // 回答1
    var choiceWord1 = rowValues[3]
    if (choiceWord1 != "") {
