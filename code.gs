@@ -24,7 +24,6 @@ function waitType() {
   var currentWaitTypeId = ""
   var currentQuestionId = -1
   var currentChoiceId = -1
-  var nextQuestionId = ""
 
   // 質問階層分questionId管理リストを用意
   var qIdList = []
@@ -60,8 +59,7 @@ function waitType() {
      cDispNoList[0] = -1
      waitTypeQuestion(currentWaitTypeId, qIdList[0], questionWord1, qDispNo, "")
    }
-   Logger.log(currentQuestionId)
-   var nextQuestionId1 = rowValues[4] != "" ? currentQuestionId+1 : ""
+   var nextQuestionId1 = rowValues[4] != "" ? currentQuestionId + 1 : ""
    // 回答1
    var choiceWord1 = rowValues[3]
    if (choiceWord1 != "") {
@@ -79,6 +77,7 @@ function waitType() {
      cDispNoList[1] = -1
      waitTypeQuestion(currentWaitTypeId, qIdList[1], questionWord2, qDispNo, "")
    }
+   var nextQuestionId2 = rowValues[6] != "" ? currentQuestionId + 1 : ""
    // 回答2
    var choiceWord2 = rowValues[5]
    if (choiceWord2 != "") {
@@ -92,13 +91,29 @@ function waitType() {
 
 // 待ち項目に紐づく質問
 function waitTypeQuestion(waitTypeId, questionId, questionWord, dispNo, nextQuestionId) {
-  var rowValues = [WAIT_TYPE_GROUP_CD, questionId, questionWord, waitTypeId, DISP_FLG, dispNo, nextQuestionId]
+  var rowValues = [
+    WAIT_TYPE_GROUP_CD,
+    zeroPadding(questionId, 10, false),
+    questionWord,
+    waitTypeId,
+    DISP_FLG,
+    dispNo,
+    zeroPadding(nextQuestionId, 10, true)
+  ]
   output("question", rowValues)
 }
 
 // 待ち項目に紐づく回答
 function waitTypeChoice(questionId, choiceId, choiceWord, waitTypeId, dispNo, nextQuestionId) {
-  var rowValues = [WAIT_TYPE_GROUP_CD, questionId, choiceId, choiceWord, waitTypeId, dispNo, nextQuestionId]
+  var rowValues = [
+    WAIT_TYPE_GROUP_CD,
+    zeroPadding(questionId, 10, false),
+    zeroPadding(choiceId, 5, false),
+    choiceWord,
+    waitTypeId,
+    dispNo,
+    zeroPadding(nextQuestionId, 10, true)
+  ]
   output("choice", rowValues)
 }
 
@@ -130,17 +145,20 @@ function getLastRow(sheet) {
   return columnVals.filter(String).length
 }
 
+// length桁に合わせてゼロ埋め
+function zeroPadding(num, length, isIgnoreEmpty) {
+  return num > 0 || (num == 0 && !isIgnoreEmpty) ? ('0000000000' + num).slice(-length) : ""
+}
 
 
-
+// TODO: 店舗全体の質問回答
 function store(sheet) {
-
 }
 
+// TODO: 店舗全体の質問
 function storeQuestion() {
-
 }
 
+// TODO: 店舗全体の回答
 function storeChoice() {
-
 }
