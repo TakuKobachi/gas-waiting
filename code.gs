@@ -1,23 +1,25 @@
 // consts
-var SHEET_NAME = ""
 var STORE_QUESTION_COLUMN_COUNT = 40
 var WAIT_TYPE_COLUMN_COUNT = 2
 var WAIT_TYPE_QUESTION_COLUMN_COUNT = 40
 var STORE_GROUP_CD = "KeyANY"
 var WAIT_TYPE_GROUP_CD = "KeyWAIT_TYPE"
+var STORE_GROUP_CD = "KeyAny"
 var DISP_FLG = "TRUE"
-var MAX_ROW_COUNT = 200 // 件数(タイトルを含まない行数)
 
 // sheets
 var spreadSheet = SpreadsheetApp.getActiveSpreadsheet()
-var sheet = spreadSheet.getSheetByName(SHEET_NAME)
+var sheet = spreadSheet.getSheetByName("input-steps")
 var questionOutputSheet = spreadSheet.getSheetByName("question")
 var choiceOutputSheet = spreadSheet.getSheetByName("choice")
 
+// ステップ入力シートの最大行数 + タイトル行
+var MAX_ROW_COUNT = sheet.getDataRange().getValues().length + 1
+
 function main() {
   clearOutputSheet()
-  waitType()
   store()
+  waitType()
 }
 
 function waitType() {
@@ -59,6 +61,7 @@ function waitType() {
      cDispNoList[0] = -1
      waitTypeQuestion(currentWaitTypeId, qIdList[0], questionWord1, qDispNo, "")
    }
+   Logger.log(currentQuestionId)
    var nextQuestionId1 = rowValues[4] != "" ? currentQuestionId + 1 : ""
    // 回答1
    var choiceWord1 = rowValues[3]
@@ -87,6 +90,7 @@ function waitType() {
      waitTypeChoice(qIdList[1], choiceId2, choiceWord2, currentWaitTypeId, cDispNoList[1], "")
    }
  }
+ Browser.msgBox("スクリプト処理が完了しました。")
 }
 
 // 待ち項目に紐づく質問
@@ -152,13 +156,74 @@ function zeroPadding(num, length, isIgnoreEmpty) {
 
 
 // TODO: 店舗全体の質問回答
-function store(sheet) {
+function store() {
+  var currentQuestionId = -1
+  var currentChoiceId = -1
+
+  // 質問の表示順
+  var qDispNo = -1
+
+  // 選択肢の表示順
+  var cDispNo = -1
+
+ // 列ごとにループ
+ for (var i = 1; i < STORE_QUESTION_COLUMN_COUNT; i++) {
+   var range = sheet.getRange(2, i, 100, 1)
+   // 列の値の配列
+   var columnValues = range.getValues()
+   if (i % 2 != 0) {
+     // 奇数(質問)
+     currentQuestionId += 1
+     qDispNo += 1
+     var questionWord = columnValues[0][0]
+     // TODO: 要確認
+     if (questionWord.lengh == 0) {
+       break
+     }
+     // TODO:
+
+     storeQuestion(currentQuestionId, questionWord, qDispNo)
+   } else {
+     // 偶数(回答)
+     cDispNo = -1
+     var choiceWordList = columnValues
+     for (var k = 0; k < choiceWordList.length; k++) {
+       var choiceWord = choiceWordList[k][0]
+       if (choiceWord.length == 0) {
+         break
+       }
+       currentChoiceId += 1
+       cDispNo += 1
+       storeChoice(currentQuestionId, currentChoiceId, choiceWord, cDispNo)
+     }
+   }
+ }
 }
 
-// TODO: 店舗全体の質問
-function storeQuestion() {
+// 店舗全体の質問
+function storeQuestion(questionId, questionWord, dispNo) {
+  var rowValues = [
+    STORE_GROUP_CD,
+    zeroPadding(questionId, 10, false),
+    questionWord,
+    null,
+    DISP_FLG,
+    dispNo,
+    null
+  ]
+  output("question", rowValues)
 }
 
-// TODO: 店舗全体の回答
-function storeChoice() {
+// 店舗全体の回答
+function storeChoice(questionId, choiceId, choiceWord, dispNo) {
+  var rowValues = [
+    STORE_GROUP_CD,
+    zeroPadding(questionId, 10, false),
+    zeroPadding(choiceId, 5, false),
+    choiceWord,
+    null,
+    dispNo,
+    null
+  ]
+  output("choice", rowValues)
 }
